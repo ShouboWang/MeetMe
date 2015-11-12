@@ -33,12 +33,15 @@
 // });
 
 
+var calendar_id;
 // Google OAuth Configuration
 var googleConfig = {
   clientID: '330889396228-qm5hvhcfkl12fnbuten4e16qgu7fb7g5.apps.googleusercontent.com',
   clientSecret: 'cw6eP8ibIOrnNr52Bt1-KSzN',
-  calendarId: '46fubf2umlcus68fl0i6g4rmfk@group.calendar.google.com',
-  redirectURL: 'http://localhost:8080/auth'
+  //calendarId: '46fubf2umlcus68fl0i6g4rmfk@group.calendar.google.com',  //make var
+  //calendarId: 'en.canadian#holiday@group.v.calendar.google.com',
+  calendarId: calendar_id,
+  redirectURL: 'http://localhost:8080/auth' //modify later
 };
 
 // Dependency setup
@@ -52,9 +55,17 @@ var app = express(),
   oAuthClient = new google.auth.OAuth2(googleConfig.clientID, googleConfig.clientSecret, googleConfig.redirectURL),
   authed = false;
 
+app.post('/testId', function(req, res){
+  calendar_id = req.param('calendar_id');
+  googleConfig.calendarId = calendar_id;
+  console.log(googleConfig);
+  res.redirect('/');
+});
+
+
 // Response for localhost:2002/
 app.get('/', function(req, res) {
-
+//app.get('/userEvents/:username', function(req, res) {
   // If we're not authenticated, fire off the OAuth flow
   if (!authed) {
 
@@ -109,7 +120,7 @@ app.get('/auth', function(req, res) {
           // Store our credentials and redirect back to our main page
           oAuthClient.setCredentials(tokens);
           authed = true;
-          res.redirect('/');
+          res.redirect('/testId');
         }
       });
     } 
