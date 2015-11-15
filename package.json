@@ -6,6 +6,7 @@
   "dependencies": {
     "express": "4.10.4",
     "googleapis": "1.0.21",
-    "moment": "2.8.4"
+    "moment": "2.8.4",
+    "body-parser" : "1.8"
   }
 }
