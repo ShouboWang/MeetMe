@@ -32,6 +32,7 @@
 //     console.log("Server listening on: http://localhost:%s", PORT);
 // });
 
+var path = require('path');
 
 var calendar_id;
 // Google OAuth Configuration
@@ -57,6 +58,15 @@ var app = express(),
 
 var bodyParser = require('body-parser');
 app.use( bodyParser.json() );
+// app.use("/styles",  express.static(__dirname + '/css'));
+// app.use("/scripts", express.static(__dirname + '/js'));
+// app.use("/images",  express.static(__dirname + '/img'));
+
+//app.configure(function() {
+    
+   // app.use(express.bodyParser());
+    //app.use(express.logger("short"));
+//});
 
 app.post('/testId', function(req, res){
   //console.log("hi1");
@@ -239,6 +249,7 @@ app.get('/', function(req, res) {
         }
       });
   }
+ // res.sendFile(path.join(__dirname, '/Frontend/index.html'));
 });
 
 // Return point for oAuth flow, should match googleConfig.redirectURL
@@ -260,7 +271,13 @@ app.get('/auth', function(req, res) {
           // Store our credentials and redirect back to our main page
           oAuthClient.setCredentials(tokens);
           authed = true;
-          res.redirect('/testId');
+         // res.redirect('/testId');
+          //console.log(__dirname);
+          console.log(path.join(__dirname, '/index.html'));
+
+          app.use(express.static(path.join(__dirname, 'Frontend')));
+          //res.sendFile(path.join(__dirname, '/Frontend/index.html'));
+          //res.render('index',{});
         }
       });
     } 
