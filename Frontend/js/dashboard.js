@@ -63,7 +63,24 @@ $( document ).ready(function() {
 			when : $("#timeText").data("select")
 		}
 
+		$.ajax({
+        url: 'http://localhost:8080/postCal',
+        // dataType: "jsonp",
+        data: JSON.stringify(obj),
+        type: 'POST',
+        contentType:"application/json",
+       // jsonpCallback: 'callback', // this is not relevant to the POST anymore
+        success: function (data) {
+            var ret = jQuery.parseJSON(data);
+           // $('#lblResponse').html(ret.msg);
+            console.log(ret);
+        },
+        error: function (xhr, status, error) {
+            console.log('Error: ' + error.message);
+            $('#lblResponse').html('Error connecting to the server.');
+        },
+    });
 
-		alert(JSON.stringify(obj, null, 4));
+		//alert(JSON.stringify(obj, null, 4));
 	})
 });

@@ -79,7 +79,7 @@ app.post('/testId', function(req, res){
 
 app.post('/postCal', function(req, res){
   var rawData = req.body;
-
+  console.log(req.body);
   // Create the return data object
   var timeObject = {};
   timeObject.when = rawData.when;
@@ -276,7 +276,7 @@ app.get('/auth', function(req, res) {
           console.log(path.join(__dirname, '/index.html'));
 
           app.use(express.static(path.join(__dirname, 'Frontend')));
-          //res.sendFile(path.join(__dirname, '/Frontend/index.html'));
+          res.sendFile(path.join(__dirname, '/Frontend/index.html'));
           //res.render('index',{});
         }
       });
