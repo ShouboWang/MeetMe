@@ -79,7 +79,7 @@ app.post('/testId', function(req, res){
 
 app.post('/postCal', function(req, res){
   var rawData = req.body;
-
+  console.log(req.body);
   // Create the return data object
   var timeObject = {};
   timeObject.when = rawData.when;
@@ -101,9 +101,17 @@ app.post('/postCal', function(req, res){
     cusObject.list = [];
     cusObject.cusAttendNum = rawData.customGroup[i].list.length;
     cusObject.curCusAttendNum = 0;
+<<<<<<< HEAD
+    timeObject.cusAttend.push(cusObject);    
+
+  }
+
+  
+=======
     timeObject.cusAttend.push(cusObject);
   }
 
+>>>>>>> 22bced7138afa8c4a410b42cea5de4d68d9438c9
   // type -2 = must, -1 = may, >0 = cus
   function callback(err, events, type) {
     if(err){
@@ -409,7 +417,7 @@ app.get('/auth', function(req, res) {
           console.log(path.join(__dirname, '/index.html'));
 
           app.use(express.static(path.join(__dirname, 'Frontend')));
-          //res.sendFile(path.join(__dirname, '/Frontend/index.html'));
+          res.sendFile(path.join(__dirname, '/Frontend/index.html'));
           //res.render('index',{});
         }
       });
