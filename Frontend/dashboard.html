@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <title>MeetMe - A Better Meeting Planner</title>
+      <!-- Bootstrap Core CSS -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+      <!-- Custom CSS -->
+      <link href="css/landing-page.css" rel="stylesheet">
+      <!-- Custom Fonts -->
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.standalone.min.css" rel="stylesheet" type="text/css">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+      <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1-rc.1/css/select2.min.css" rel="stylesheet" />
+   </head>
+   <body>
+      <!-- Navigation -->
+      <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+         <div class="container topnav">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+               <span class="sr-only">Toggle navigation</span>
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+               </button>
+               <a class="navbar-brand topnav" href="#">MeetMe</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+               <ul class="nav navbar-nav navbar-right">
+                  <li>
+                     <a href="#">Hello, Larry</a>
+                  </li>
+               </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+         </div>
+         <!-- /.container -->
+      </nav>
+      <div id='formContainer' class="row">
+         <!-- uncomment code for absolute positioning tweek see top comment in css -->
+         <!-- <div class="absolute-wrapper"> </div> -->
+         <!-- Menu -->
+         <div class="side-menu">
+            <nav class="navbar navbar-default" role="navigation">
+               <!-- Brand and toggle get grouped for better mobile display -->
+               <div class="navbar-header">
+                  <div class="brand-wrapper">
+                     <!-- Hamburger -->
+                     <button type="button" class="navbar-toggle">
+                     <span class="sr-only">Toggle navigation</span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                     </button>
+                  </div>
+               </div>
+               <!-- Main Menu -->
+               <div class="side-menu-container">
+                  <ul style="margin-left:5px" class="nav navbar-nav">
+                     <li class="active"><a href="#"><i class="fa fa-users"></i> <span class="sideDescription"> Schedule Meeting </span></a></li>
+                     <li><a href="#"><i class="fa fa-cogs"></i></i> <span class="sideDescription"> Manage Meeting </span></a></li>
+                     <!-- Dropdown-->
+                     <li class="panel panel-default" id="dropdown">
+                        <a data-toggle="collapse" href="#dropdown-lvl1">
+                        <i class="fa fa-calendar"></i><span class="sideDescription">My Calendars</span> <span class="caret"></span>
+                        </a>
+                        <!-- Dropdown level 1 -->
+                        <div id="dropdown-lvl1" class="panel-collapse collapse">
+                           <div class="panel-body">
+                              <ul class="nav navbar-nav">
+                                 <li><a href="#">Google Calendar</a></li>
+                                 <li><a href="#">Facebook Events</a></li>
+                                 <li><a href="#">Outlook Calendar</a></li>
+                              </ul>
+                           </div>
+                        </div>
+                     </li>
+                     <li><a href="#"><i class="fa fa-spinner"></i><span class="sideDescription"> Upcoming Features </span></a></li>
+                  </ul>
+               </div>
+               <!-- /.navbar-collapse -->
+            </nav>
+         </div>
+         <!-- Main Content -->
+         <div class="container-fluid">
+            <div class="side-body">
+               <form class="form-horizontal">
+                  <fieldset>
+                     <!-- Form Name -->
+                     <legend></legend>
+                     <!-- Text input-->
+                     <div class="form-group">
+                        <label class="col-md-2 control-label" for="title">Title</label>  
+                        <div class="col-md-6">
+                           <input id="title" name="title" type="text" placeholder="" class="form-control input-md" required="">    
+                        </div>
+                     </div>
+                     <!-- Text input-->
+                     <div class="form-group">
+                        <label class="col-md-2 control-label" for="location">Location</label>  
+                        <div class="col-md-6">
+                           <input id="location" name="location" type="text" placeholder="Optional" class="form-control input-md">
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label" for="location">Date</label>  
+                        <div class="col-md-6">
+                           <div class="date"></div>
+                        </div>
+                     </div>
+                     <!-- Button Drop Down -->
+                     <div class="form-group">
+                        <label class="col-md-2 control-label" for="time">Time</label>
+                        <div class="col-md-6">
+                           <div class="input-group">
+                              <input id="time" name="time" class="form-control" placeholder="Meeting Length (miniutes)" type="text">
+                              <div class="input-group-btn">
+                                 <button id="timeBtn" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                 Any Time
+                                 <span class="caret"></span>
+                                 </button>
+                                 <ul id="timeText" data-select="1" class="dropdown-menu pull-right">
+                                    <li><a  data-select="1" class="timeDropdown">Any Time</a></li>
+                                    <li><a  data-select="2" class="timeDropdown">Morning</a></li>
+                                    <li><a data-select="3" class="timeDropdown">Afternoon</a></li>
+                                    <li><a data-select="4" class="timeDropdown">Night</a></li>
+                                 </ul>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <label class="col-md-2 control-label" for="title">Invite People</label>  
+                        <div class="col-md-6">
+                           <button id="customGroupBtn" type="button" class="btn btn-info btn-sm"><i class="fa fa-plus"></i> Custom Group</button>   
+                        </div>
+                     </div>
+                     <div class="form-group subLevelGroup">
+                        <label class="col-md-2 control-label" for="title">Must Attend</label>  
+                        <div class="col-md-6">
+                           <select id="mustAttSelect" multiple="multiple">
+                              <option value="jack@gmail.com">Jack Wang</option>
+                              <option value="anna@gmail.com">Anna Tang</option>
+                              <option value="jerry@gmail.com">Jerry Smith</option>
+                              <option value="leo@gmail.com">Leo White</option>
+                              <option value="kevin@gmail.com">Kevin Brown</option>
+                              <option value="amy@gmail.com">Amy Izzi</option>
+                           </select>
+                        </div>
+                     </div>
+                     <div class="form-group subLevelGroup">
+                        <label class="col-md-2 control-label" for="title">May Attend</label>  
+                        <div class="col-md-6">
+                           <select id="mayAttSelect" multiple="multiple">
+                              <option value="jack@gmail.com">Jack Wang</option>
+                              <option value="anna@gmail.com">Anna Tang</option>
+                              <option value="jerry@gmail.com">Jerry Smith</option>
+                              <option value="leo@gmail.com">Leo White</option>
+                              <option value="kevin@gmail.com">Kevin Brown</option>
+                              <option value="amy@gmail.com">Amy Izzi</option>
+                           </select>
+                        </div>
+                     </div>
+                     <div id="customGroupDiv">
+                     </div>
+                     <div class="form-group"> 
+                        <div class="col-md-offset-2 col-md-6">
+                            <button id="arrangeBtn" type="button" class="btn btn-success"><i class="fa fa-calendar-plus-o"></i> Arrange Meeting</button>
+                        </div>
+                     </div>
+                     
+                  </fieldset>
+               </form>
+            </div>
+         </div>
+         <div class="modal fade" id="newGroupModal">
+            <div class="modal-dialog">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                     <h4 class="modal-title">Custom Group</h4>
+                  </div>
+                  <div class="modal-body">
+                     <form class="form-horizontal">
+                        <div class="form-group">
+                           <label class="col-md-4 control-label" for="location">Group Name</label>  
+                           <div class="col-md-5">
+                              <input id="groupName" name="location" type="text" class="form-control input-md">
+                           </div>
+                        </div>
+                        <div class="form-group">
+                           <label class="col-md-4 control-label" for="location"># of Must Attend</label>  
+                           <div class="col-md-5">
+                              <input id="mustattendNum" name="mustattendNum" type="text" class="form-control input-md">
+                           </div>
+                        </div>
+                     </form>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     <button id="createNewGroups" type="button" class="btn btn-success">Create</button>
+                  </div>
+               </div>
+               <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+         </div>
+         <!-- /.modal -->
+      </div>
+      <!-- jQuery -->
+      <script src="js/jquery.js"></script>
+      <!-- Bootstrap Core JavaScript -->
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+      <script src="js/dashboard.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1-rc.1/js/select2.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
+   </body>
+</html>
