@@ -1,16 +1,16 @@
 //Lets require/import the HTTP module
 // var http = require('http');
 // var fs = require('fs');
-// const PORT=8000; 
+// const PORT=8000;
 
 // fs.readFile('./index.html', function (err, html) {
 //     if (err) {
-//         throw err; 
-//     }       
-//     http.createServer(function(request, response) {  
-//         response.writeHeader(200, {"Content-Type": "text/html"});  
-//         response.write(html);  
-//         response.end();  
+//         throw err;
+//     }
+//     http.createServer(function(request, response) {
+//         response.writeHeader(200, {"Content-Type": "text/html"});
+//         response.write(html);
+//         response.end();
 //     }).listen(PORT);
 // });
 
@@ -74,7 +74,7 @@ app.post('/postCal', function(req, res){
   var timeObject = {};
   timeObject.when = rawData.when;
   timeObject.duration = rawData.duration;
-  timeObject.date = rawData.dates;
+  timeObject.dates = rawData.dates;
   timeObject.mustAttend = [];
   timeObject.mustAttendNum = rawData.mustAttend.length;
   timeObject.curMustAttendNum = 0;
@@ -91,9 +91,9 @@ app.post('/postCal', function(req, res){
     cusObject.list = [];
     cusObject.cusAttendNum = rawData.customGroup[i].list.length;
     cusObject.curCusAttendNum = 0;
-    timeObject.cusAttend.push(cusObject);    
+    timeObject.cusAttend.push(cusObject);
   }
-  
+
   // type -2 = must, -1 = may, >0 = cus
   function callback(err, events, type) {
     if(err){
@@ -104,9 +104,9 @@ app.post('/postCal', function(req, res){
         timeObject.mustAttend.push(timeEventFormatter(events));
       } else if(type == -2) {
         timeObject.mayAttend.push(timeEventFormatter(events));
-      } else { 
+      } else {
         timeObject.cusAttend[type].list.push(timeEventFormatter(events));
-      }      
+      }
     }
 
     if(type == -2) timeObject.curMustAttendNum ++;
@@ -114,66 +114,200 @@ app.post('/postCal', function(req, res){
     else timeObject.cusAttend[type].curCusAttendNum ++;
 
     // Check if call back is done
-    var done = true;
-    done = timeObject.curMustAttendNum == timeObject.mustAttendNum && 
-      timeObject.curMayAttendNum == timeObject.mayAttendNum;
-
+    if (timeObject.curMustAttendNum != timeObject.mustAttendNum ||
+      timeObject.curMayAttendNum != timeObject.mayAttendNum) return;
     for(var i = 0; i < timeObject.cusAttend.length; i++) {
-      if(timeObject.cusAttend[i].cusAttendNum != 
+      if(timeObject.cusAttend[i].cusAttendNum !=
         timeObject.cusAttend[i].curCusAttendNum)
-        done = false;
+        return;
     }
 
-    if(!done) return;
-    
     alg(timeObject, res);
   }
 
-  for(var i = 0; i < rawData.mustAttend.length; i++) {
-    getCalData(rawData.mustAttend[i], callback, -2);
-  }
+  for (var d = 0; d < timeObject.dates.length; d++) {
+    var date = new Date(timeObject.dates[d]);
 
-  for(var i = 0; i < rawData.mayAttend.length; i++) {
-    getCalData(rawData.mayAttend[i], callback, -1);
-  }
+    for(var i = 0; i < rawData.mustAttend.length; i++) {
+      getCalData(rawData.mustAttend[i], date, callback, -2);
+    }
 
-  for(var i = 0; i < rawData.customGroup.length; i++) {
-    for(var ii = 0; ii < rawData.customGroup[i].list.length; ii++){
-      getCalData(rawData.customGroup[i].list[ii], callback, i);
+    for(var i = 0; i < rawData.mayAttend.length; i++) {
+      getCalData(rawData.mayAttend[i], date, callback, -1);
+    }
+
+    for(var i = 0; i < rawData.customGroup.length; i++) {
+      for(var ii = 0; ii < rawData.customGroup[i].list.length; ii++){
+        getCalData(rawData.customGroup[i].list[ii], date, callback, i);
+      }
     }
   }
 });
 
+function findFreeTimes(rangeStart, rangeEnd, minDuration, busyList) {
+  if (busyList.length == 0) {
+    return [{
+      "startTime" : new Date(rangeStart).toISOString(),
+      "endTime" : new Date(rangeEnd).toISOString()
+    }];
+  }
+
+  var freeTimes = [];
+  var iStart = new Date(rangeStart);
+  var iEnd = new Date(rangeEnd);
+  for (var i = 0; i < busyList.length; i++) {
+    iEnd = new Date(busyList[i].startTime);
+    var diffMins = Math.round( (Math.abs(iEnd - iStart) / 1000) / 60 );
+    if (diffMins >= minDuration) {
+      freeTimes.push({
+        "startTime" : iStart.toISOString(),
+        "endTime" : iEnd.toISOString()
+      });
+    }
+    iStart = new Date(busyList[i].endTime);
+  }
+
+  var diffMins = Math.round( (Math.abs(new Date(rangeEnd) - iStart) / 1000) / 60 );
+  if (diffMins >= minDuration) {
+    freeTimes.push({
+      "startTime" : iStart.toISOString(),
+      "endTime" : new Date(rangeEnd).toISOString()
+    });
+  }
+  return freeTimes;
+}
+
 function alg(timeObject, res){
   timeObjectFormatter(timeObject);
 
-  // Logic in Here
+  var timeOfDay = timeObject.when;
+  var todBegin, todEnd;
+  if (timeOfDay == 1) { // all day
+    todBegin = 7;
+    todEnd = 21;
+  } else if (timeOfDay == 2) { // morning
+    todBegin = 7;
+    todEnd = 12;
+  } else if (timeOfDay == 3) { // afternoon
+    todBegin = 12;
+    todEnd = 17;
+  } else if (timeOfDay == 4) { // night
+    todBegin = 17;
+    todEnd = 21;
+  }
 
+  var mustItems = [];
+  // filter out applicable events into mustItems
+  for (var i = 0; i < timeObject.mustAttend.length; i++) {
+    var mustAttendeeItems = timeObject.mustAttend[i].items;
+    for (var ii = 0; ii < mustAttendeeItems.length; ii++) {
+      var startTime = new Date(mustAttendeeItems[ii].startTime);
+      var endTime = new Date(mustAttendeeItems[ii].endTime);
+      if (startTime.getHours() >= todBegin && endTime.getHours() <= todEnd) {
+        mustItems.push({
+          'startTime' : startTime,
+          'endTime' : endTime
+        });
+      }
+    }
+  }
 
+// // dummy data
+// mustItems.push({
+//   'startTime' : '2015-11-17T09:00:00.000Z',
+//   'endTime' :   '2015-11-17T11:00:00.000Z'
+// },
+// {
+//   'startTime' : '2015-11-17T10:30:00.000Z',
+//   'endTime' :   '2015-11-17T13:00:00.000Z'
+// },
+// {
+//   'startTime' : '2015-11-17T16:00:00.000Z',
+//   'endTime' :   '2015-11-17T17:00:00.000Z'
+// },
+// {
+//   'startTime' : '2015-11-18T07:30:00.000Z',
+//   'endTime' :   '2015-11-18T12:00:00.000Z'
+// },
+// {
+//   'startTime' : '2015-11-18T12:45:00.000Z',
+//   'endTime' :   '2015-11-18T21:00:00.000Z'
+// });
 
+  // merge overlapping items
+  var i = mustItems.length;
+  while (--i > 0) { // iterate reverse
+    var currStartTime = new Date(mustItems[i].startTime);
+    var prevEndTime = new Date(mustItems[i-1].endTime);
+    if (currStartTime.getFullYear() == prevEndTime.getFullYear()
+        && currStartTime.getMonth() == prevEndTime.getMonth()
+        && currStartTime.getDate() == prevEndTime.getDate()
+        && currStartTime.getTime() <= prevEndTime.getTime()) {
+      mustItems[i].startTime = mustItems[i-1].startTime;
+      mustItems.splice(i-1, 1);
+    }
+  }
 
+  // find all free times
+  var freeTimes = []; // list of { startTime, endTime } objects
+  if (mustItems.length == 0) {
+    for (var d = 0; d < timeObject.dates.length; d++) {
+      var date = new Date(timeObject.dates[d]);
+      var startTime = new Date(date);
+      startTime.setHours(todBegin);
+      var endTime = new Date(date);
+      endTime.setHours(todEnd);
+      freeTimes.push({
+        "startTime" : startTime.toISOString(),
+        "endTime" : endTime.toISOString()
+      });
+    }
+  } else {
+    var i = 0;
+    for (var d = 0; d < timeObject.dates.length; d++) {
+      var currDate = new Date(timeObject.dates[d]);
+      var busyListForDate = [];
+      while (i < mustItems.length
+        && new Date(mustItems[i].startTime).getFullYear() == currDate.getFullYear()
+        && new Date(mustItems[i].startTime).getMonth() == currDate.getMonth()
+        && new Date(mustItems[i].startTime).getDate() == currDate.getDate()) {
+        busyListForDate.push(mustItems[i]);
+        i++;
+      }
+      // append to free times array
+      var rangeStart = new Date(currDate);
+      rangeStart.setHours(todBegin - 5); // TODO: figure out why this -5 is needed... time zone issue???
+      var rangeEnd = new Date(currDate);
+      rangeEnd.setHours(todEnd - 5); // TODO: figure out why this -5 is needed... time zone issue???
+      freeTimes.push.apply(freeTimes, findFreeTimes(rangeStart.toISOString(), rangeEnd.toISOString(), timeObject.duration, busyListForDate));
+    }
+  }
 
-
+  var randomReturnIndex = Math.floor(Math.random() * (freeTimes.length - 1));
+  var optimalMeetingTimeSlot = freeTimes[randomReturnIndex];
+  optimalMeetingTimeSlot.startTime = moment(new Date(optimalMeetingTimeSlot.startTime)).format('YYYY-MM-DD h:mm a');
+  optimalMeetingTimeSlot.endTime = moment(new Date(optimalMeetingTimeSlot.endTime)).format('YYYY-MM-DD h:mm a');
+  timeObject.optimalMeetingTimeSlot = optimalMeetingTimeSlot;
   res.send(timeObject);
 }
 
 function timeEventFormatter(timeEvent) {
-  var perttyTimeEvent = {};
-  perttyTimeEvent.summary = timeEvent.summary;
-  perttyTimeEvent.owner = timeEvent.items.length > 0 ? 
+  var prettyTimeEvent = {};
+  prettyTimeEvent.summary = timeEvent.summary;
+  prettyTimeEvent.owner = timeEvent.items.length > 0 ?
     timeEvent.items[0].creator.displayName : timeEvent.summary;
-  perttyTimeEvent.timeZone = timeEvent.timeZone;
-  perttyTimeEvent.items = [];
+  prettyTimeEvent.timeZone = timeEvent.timeZone;
+  prettyTimeEvent.items = [];
   for(var i = 0; i < timeEvent.items.length; i++) {
     var rawItem = timeEvent.items[i];
     var itemInfo = {};
     itemInfo.summary = rawItem.summary == undefined ? "" : rawItem.summary;
     itemInfo.startTime = rawItem.start.dateTime == undefined ? rawItem.start.date : rawItem.start.dateTime;
     itemInfo.endTime = rawItem.end.dateTime == undefined ? rawItem.end.date : rawItem.end.dateTime;
-    perttyTimeEvent.items.push(itemInfo);
+    prettyTimeEvent.items.push(itemInfo);
   }
 
-  return perttyTimeEvent;
+  return prettyTimeEvent;
 }
 
 function timeObjectFormatter(timeObject) {
@@ -188,17 +322,15 @@ function timeObjectFormatter(timeObject) {
   }
 }
 
-function getCalData(calId, callback, type){
-  // Format today's date
+function getCalData(calId, date, callback, type){
   googleConfig.calendarId = calId;
-  var today = moment().format('YYYY-MM-DD') + 'T';
-
-  // Call google to fetch events for today on our calendar
+  var dateString = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate();
+  // Call google to fetch events for dateString on our calendar
   calendar.events.list({
     calendarId: googleConfig.calendarId,
     maxResults: 20,
-    timeMin: today + '00:00:00.000Z',
-    timeMax: today + '23:59:59.000Z',
+    timeMin: dateString + '00:00:00.000Z',
+    timeMax: dateString + '23:59:59.000Z',
     auth: oAuthClient
   }, function(err, events) {
     callback(err, events, type);
@@ -209,7 +341,7 @@ function getCalData(calId, callback, type){
 app.get('/', function(req, res) {
   //app.get('/userEvents/:username', function(req, res) {
   // If we're not authenticated, fire off the OAuth flow
-  
+
   if (!authed) {
     // Generate an OAuth URL and redirect there
     var url = oAuthClient.generateAuthUrl({
@@ -256,14 +388,14 @@ app.get('/auth', function(req, res) {
         } else {
           console.log('Successfully authenticated');
           console.log(tokens);
-          
+
           // Store our credentials and redirect back to our main page
           oAuthClient.setCredentials(tokens);
           authed = true;
           res.redirect('/testId');
         }
       });
-    } 
+    }
 });
 
 var server = app.listen(8080, function() {
