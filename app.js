@@ -101,17 +101,9 @@ app.post('/postCal', function(req, res){
     cusObject.list = [];
     cusObject.cusAttendNum = rawData.customGroup[i].list.length;
     cusObject.curCusAttendNum = 0;
-<<<<<<< HEAD
     timeObject.cusAttend.push(cusObject);    
 
   }
-
-  
-=======
-    timeObject.cusAttend.push(cusObject);
-  }
-
->>>>>>> 22bced7138afa8c4a410b42cea5de4d68d9438c9
   // type -2 = must, -1 = may, >0 = cus
   function callback(err, events, type) {
     if(err){
