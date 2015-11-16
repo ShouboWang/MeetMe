@@ -63,7 +63,7 @@ app.use( bodyParser.json() );
 // app.use("/images",  express.static(__dirname + '/img'));
 
 //app.configure(function() {
-    
+
    // app.use(express.bodyParser());
     //app.use(express.logger("short"));
 //});
@@ -334,7 +334,8 @@ function timeObjectFormatter(timeObject) {
 
 function getCalData(calId, date, callback, type){
   googleConfig.calendarId = calId;
-  var dateString = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate();
+  var dateObj = new Date(date);
+  var dateString = dateObj.getFullYear()+'-'+dateObj.getMonth()+'-'+dateObj.getDate();
   // Call google to fetch events for dateString on our calendar
   calendar.events.list({
     calendarId: googleConfig.calendarId,
