@@ -58,15 +58,7 @@ var app = express(),
 
 var bodyParser = require('body-parser');
 app.use( bodyParser.json() );
-// app.use("/styles",  express.static(__dirname + '/css'));
-// app.use("/scripts", express.static(__dirname + '/js'));
-// app.use("/images",  express.static(__dirname + '/img'));
 
-//app.configure(function() {
-
-   // app.use(express.bodyParser());
-    //app.use(express.logger("short"));
-//});
 
 app.post('/testId', function(req, res){
   //console.log("hi1");
@@ -75,6 +67,13 @@ app.post('/testId', function(req, res){
   //console.log(googleConfig);
   res.redirect('/');
 });
+
+app.post('/login', function(req, res){
+  var loginObj = {
+    success : true
+  };
+  res.send(loginObj);
+})
 
 
 app.post('/postCal', function(req, res){
@@ -188,8 +187,6 @@ function findFreeTimes(rangeStart, rangeEnd, minDuration, busyList) {
 }
 
 function alg(timeObject, res){
-  //console.log("Time Object");
-  //console.log(timeObject);
   timeObjectFormatter(timeObject);
 
   var timeOfDay = timeObject.when;
@@ -246,10 +243,6 @@ function alg(timeObject, res){
 //   'endTime' :   '2015-11-18T21:00:00.000Z'
 // });
 
-  mustItems.sort(function(a, b) {
-    return new Date(b.startTime) - new Date(a.startTime);
-  });
-
   // merge overlapping items
   var i = mustItems.length;
   while (--i > 0) { // iterate reverse
@@ -292,9 +285,9 @@ function alg(timeObject, res){
       }
       // append to free times array
       var rangeStart = new Date(currDate);
-      rangeStart.setHours(todBegin); // TODO: figure out why this -5 is needed... time zone issue???
+      rangeStart.setHours(todBegin - 5); // TODO: figure out why this -5 is needed... time zone issue???
       var rangeEnd = new Date(currDate);
-      rangeEnd.setHours(todEnd); // TODO: figure out why this -5 is needed... time zone issue???
+      rangeEnd.setHours(todEnd - 5); // TODO: figure out why this -5 is needed... time zone issue???
       freeTimes.push.apply(freeTimes, findFreeTimes(rangeStart.toISOString(), rangeEnd.toISOString(), timeObject.duration, busyListForDate));
     }
   }
@@ -304,7 +297,6 @@ function alg(timeObject, res){
   optimalMeetingTimeSlot.startTime = moment(new Date(optimalMeetingTimeSlot.startTime)).format('YYYY-MM-DD h:mm a');
   optimalMeetingTimeSlot.endTime = moment(new Date(optimalMeetingTimeSlot.endTime)).format('YYYY-MM-DD h:mm a');
   timeObject.optimalMeetingTimeSlot = optimalMeetingTimeSlot;
-console.log(timeObject);
   res.send(timeObject);
 }
 
@@ -342,8 +334,7 @@ function timeObjectFormatter(timeObject) {
 function getCalData(calId, date, callback, type){
   googleConfig.calendarId = calId;
   var dateObj = new Date(date);
-  // var today = moment().format('YYYY-MM-DD') + 'T';
-  var dateString = dateObj.getFullYear()+'-'+(dateObj.getMonth()+1)+'-'+dateObj.getDate()+'T';
+  var dateString = dateObj.getFullYear()+'-'+dateObj.getMonth()+'-'+dateObj.getDate();
   // Call google to fetch events for dateString on our calendar
   calendar.events.list({
     calendarId: googleConfig.calendarId,
@@ -390,7 +381,7 @@ app.get('/', function(req, res) {
         }
       });
   }
- // res.sendFile(path.join(__dirname, '/Frontend/index.html'));
+  res.sendFile(path.join(__dirname, '/Frontend/index.html'));
 });
 
 // Return point for oAuth flow, should match googleConfig.redirectURL

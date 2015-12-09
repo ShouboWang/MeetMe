@@ -64,24 +64,24 @@ $( document ).ready(function() {
 		}
 
 		$.ajax({
-        url: 'http://localhost:8080/postCal',
-        // dataType: "jsonp",
-        data: JSON.stringify(obj),
-        type: 'POST',
-        contentType:"application/json",
-       // jsonpCallback: 'callback', // this is not relevant to the POST anymore
-        success: function (data) {
-        	$("#scheduleForm").hide();
-        	$("#confirmDiv").show();
-        	window.scrollTo(0, 0);
-        	$("#startTime").html(data.optimalMeetingTimeSlot.startTime);
-        	$("#endTime").html(data.optimalMeetingTimeSlot.endTime);
-        	console.log(data);
-        },
-        error: function (xhr, status, error) {
-          
-        },
-    });
+	        url: 'http://localhost:8080/postCal',
+	        // dataType: "jsonp",
+	        data: JSON.stringify(obj),
+	        type: 'POST',
+	        contentType:"application/json",
+	       // jsonpCallback: 'callback', // this is not relevant to the POST anymore
+	        success: function (data) {
+	        	$("#scheduleForm").hide();
+	        	$("#confirmDiv").show();
+	        	window.scrollTo(0, 0);
+	        	$("#startTime").html(data.optimalMeetingTimeSlot.startTime);
+	        	$("#endTime").html(data.optimalMeetingTimeSlot.endTime);
+	        	console.log(data);
+	        },
+	        error: function (xhr, status, error) {
+	          	
+	        },
+    	});
 
 	$('#refreshButton').click(function(){
 		location.reload();
