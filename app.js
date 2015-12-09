@@ -1,37 +1,3 @@
-//Lets require/import the HTTP module
-// var http = require('http');
-// var fs = require('fs');
-// const PORT=8000;
-
-// fs.readFile('./index.html', function (err, html) {
-//     if (err) {
-//         throw err;
-//     }
-//     http.createServer(function(request, response) {
-//         response.writeHeader(200, {"Content-Type": "text/html"});
-//         response.write(html);
-//         response.end();
-//     }).listen(PORT);
-// });
-
-
-// //Lets define a port we want to listen to
-
-
-// //We need a function which handles requests and send response
-// function handleRequest(request, response){
-//     response.end('It Works!! Path Hit: ' + request.url);
-// }
-
-// //Create a server
-// var server = http.createServer(handleRequest);
-
-// //Lets start our server
-// server.listen(PORT, function(){
-//     //Callback triggered when server is successfully listening. Hurray!
-//     console.log("Server listening on: http://localhost:%s", PORT);
-// });
-
 var path = require('path');
 var MongoClient = require('mongodb').MongoClient;
 var mongoUrl = 'mongodb://localhost:27017/meetme';
@@ -70,6 +36,7 @@ app.post('/testId', function(req, res){
 });
 
 app.post('/postSendMail', function(req, res) {
+  var rawData = req.body;
   var nodemailer = require('nodemailer');
 
   // create reusable transporter object using SMTP transport
@@ -82,11 +49,15 @@ app.post('/postSendMail', function(req, res) {
   });
 
   // setup e-mail data with unicode symbols
+  var text = 'Hello, \r\n\r\nYou have been inviated to ' + rawData.title + '.\r\n' +  'Location: ' + rawData.location + '\r\n';
+  text += 'Start Time:' + rawData.startTime + '\r\n' + 'End Time' + rawData.endTime + '\r\n';
+  text += '\r\nMessage:' + rawData.message + '\r\n\r\n';
+  text += 'MeetMe';
   var mailOptions = {
       from: 'MeetMe <mail.meetme@gmail.com>', // sender address
-      to: 'eman.j.lee@gmail.com', // list of receivers
+      to: rawData.emailArray.join(), // list of receivers
       subject: 'MeetMe: Your presence has been requested!', // Subject line
-      text: 'Hello,', // plaintext body
+      text: text, // plaintext body
   };
 
   // send mail with defined transport object
@@ -95,11 +66,10 @@ app.post('/postSendMail', function(req, res) {
           return console.log(error);
       }
       console.log('Message sent: ' + info.response);
+      res.send({success: true});
 
   });
 });
-
-
 
 app.post('/login', function(req, res){
   var rawData = req.body;
@@ -142,7 +112,7 @@ app.post('/login', function(req, res){
     });
   });
 
-})
+});
 
 app.post('/getUserList', function(req, res){
 
@@ -183,9 +153,8 @@ app.post('/register', function(req, res){
 
   MongoClient.connect(mongoUrl, function(err, db) {
     db.collection('user').insertOne(Iuser, function(err, result) {
-      assert.equal(err, null);
+     // assert.equal(err, null);
       console.log("Inserted a document into the restaurants collection.");
-      callback(result);
     });
   });
 
@@ -226,7 +195,7 @@ app.post('/postCal', function(req, res){
   // type -2 = must, -1 = may, >0 = cus
   function callback(err, events, type) {
     if(err){
-      console.log('Error fetching events');
+      console.log('Error fetching events1');
       console.log(err);
     } else {
       if(type == -1) {
@@ -341,28 +310,6 @@ function alg(timeObject, res){
     }
   }
 
-// // dummy data
-// mustItems.push({
-//   'startTime' : '2015-11-17T09:00:00.000Z',
-//   'endTime' :   '2015-11-17T11:00:00.000Z'
-// },
-// {
-//   'startTime' : '2015-11-17T10:30:00.000Z',
-//   'endTime' :   '2015-11-17T13:00:00.000Z'
-// },
-// {
-//   'startTime' : '2015-11-17T16:00:00.000Z',
-//   'endTime' :   '2015-11-17T17:00:00.000Z'
-// },
-// {
-//   'startTime' : '2015-11-18T07:30:00.000Z',
-//   'endTime' :   '2015-11-18T12:00:00.000Z'
-// },
-// {
-//   'startTime' : '2015-11-18T12:45:00.000Z',
-//   'endTime' :   '2015-11-18T21:00:00.000Z'
-// });
-
   // merge overlapping items
   var i = mustItems.length;
   while (--i > 0) { // iterate reverse
@@ -454,15 +401,18 @@ function timeObjectFormatter(timeObject) {
 function getCalData(calId, date, callback, type){
   googleConfig.calendarId = calId;
   var dateObj = new Date(date);
-  var dateString = dateObj.getFullYear()+'-'+dateObj.getMonth()+'-'+dateObj.getDate();
+  var dateString = dateObj.getFullYear()+'-'+(parseInt(dateObj.getMonth())+1)+'-'+dateObj.getDate() + 'T';
+  //var dateString = moment().format('YYYY-MM-DD') + 'T';
   // Call google to fetch events for dateString on our calendar
-  calendar.events.list({
+  var calData = {
     calendarId: googleConfig.calendarId,
     maxResults: 20,
     timeMin: dateString + '00:00:00.000Z',
     timeMax: dateString + '23:59:59.000Z',
     auth: oAuthClient
-  }, function(err, events) {
+  };
+  console.log(calData);
+  calendar.events.list(calData, function(err, events) {
     callback(err, events, type);
   });
 }

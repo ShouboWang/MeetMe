@@ -1,10 +1,32 @@
 $( document ).ready(function() {
+	$.ajax({
+	    url: 'http://localhost:8080/getUserList',
+	        // dataType: "jsonp",
+	    data: JSON.stringify({}),
+	    type: 'POST',
+	    contentType:"application/json",
+	    // jsonpCallback: 'callback', // this is not relevant to the POST anymore
+	    success: function (data) {
+	    	var options = '';
+	    	$.each(data, function(index, value){
+	    		options += '<option value="' + value.email + '">' + value.name + '</option>';
+	    	});
+	    	console.log(options);
+	    	$("#mustAttSelect").empty().append(options);
+	    	$("#mayAttSelect").empty().append(options);
+	    	$("#mustAttSelect").select2({ width: '98%' });  
+			$("#mayAttSelect").select2({ width: '98%' });  
+	    },
+	    error: function (xhr, status, error) {
+	          	
+	    },
+    });
+	var emailList = [];
 	$('.date').datepicker({
 		multidate: true,
 		startDate: '+0d'
 	});
-	$("#mustAttSelect").select2({ width: '98%' });  
-	$("#mayAttSelect").select2({ width: '98%' });      
+	    
 	$('.timeDropdown').on("click", function(){
 		var value = $(this).data("select");
 		var text = $(this).text();
@@ -40,6 +62,8 @@ $( document ).ready(function() {
 		var dates = $(".date").datepicker('getDates');
 		var mustAttend = $("#mustAttSelect").val();
 		var mayAttend = $("#mayAttSelect").val();
+		emailList.push(mustAttend);
+		emailList.push(mayAttend);
 		var customGroup = [];
 		var duration = $("#time").val();
 		$( ".newGroup" ).each(function( i ) {
@@ -83,10 +107,48 @@ $( document ).ready(function() {
 	        },
     	});
 
+		//alert(JSON.stringify(obj, null, 4));
+	});
+
 	$('#refreshButton').click(function(){
 		location.reload();
 	})
 
-		//alert(JSON.stringify(obj, null, 4));
-	})
+	$("#sendInviteBtn").click(function(){
+		var emailArray = [];
+		$.each( emailList, function(index, value) {
+		   $.each(value, function(i, email){
+		   		emailArray.push(email);
+		   })
+		});
+		var obj = {
+			startTime: $("#startinput").val(),
+			endTime: $("#endinput").val(),
+			message: $("#comment").val(),
+			emailArray: emailArray,
+			title: $("#title").val(),
+			location: $("#location").val()
+		};
+
+		$.ajax({
+	        url: 'http://localhost:8080/postSendMail',
+	        // dataType: "jsonp",
+	        data: JSON.stringify(obj),
+	        type: 'POST',
+	        contentType:"application/json",
+	       // jsonpCallback: 'callback', // this is not relevant to the POST anymore
+	        success: function (data) {
+	        	if(data.success){
+	    			$(':input').val("");
+	    			$("#scheduleForm").show();
+	        		$("#confirmDiv").hide();
+	        		$("#successbox").show();
+	        		window.scrollTo(0, 0);
+	        	}
+	        },
+	        error: function (xhr, status, error) {
+	          	
+	        },
+    	});
+	});
 });
