@@ -58,15 +58,6 @@ var app = express(),
 
 var bodyParser = require('body-parser');
 app.use( bodyParser.json() );
-// app.use("/styles",  express.static(__dirname + '/css'));
-// app.use("/scripts", express.static(__dirname + '/js'));
-// app.use("/images",  express.static(__dirname + '/img'));
-
-//app.configure(function() {
-
-   // app.use(express.bodyParser());
-    //app.use(express.logger("short"));
-//});
 
 app.post('/testId', function(req, res){
   //console.log("hi1");
@@ -106,6 +97,12 @@ app.post('/postSendMail', function(req, res) {
   });
 )};
 
+app.post('/login', function(req, res){
+  var loginObj = {
+    success : true
+  };
+  res.send(loginObj);
+})
 
 app.post('/postCal', function(req, res){
   var rawData = req.body;
@@ -412,7 +409,7 @@ app.get('/', function(req, res) {
         }
       });
   }
- // res.sendFile(path.join(__dirname, '/Frontend/index.html'));
+  res.sendFile(path.join(__dirname, '/Frontend/index.html'));
 });
 
 // Return point for oAuth flow, should match googleConfig.redirectURL

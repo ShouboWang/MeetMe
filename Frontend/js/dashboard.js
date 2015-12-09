@@ -64,22 +64,28 @@ $( document ).ready(function() {
 		}
 
 		$.ajax({
-        url: 'http://localhost:8080/postCal',
-        // dataType: "jsonp",
-        data: JSON.stringify(obj),
-        type: 'POST',
-        contentType:"application/json",
-       // jsonpCallback: 'callback', // this is not relevant to the POST anymore
-        success: function (data) {
-            var ret = jQuery.parseJSON(data);
-           // $('#lblResponse').html(ret.msg);
-            console.log(ret);
-        },
-        error: function (xhr, status, error) {
-            console.log('Error: ' + error.message);
-            $('#lblResponse').html('Error connecting to the server.');
-        },
-    });
+	        url: 'http://localhost:8080/postCal',
+	        // dataType: "jsonp",
+	        data: JSON.stringify(obj),
+	        type: 'POST',
+	        contentType:"application/json",
+	       // jsonpCallback: 'callback', // this is not relevant to the POST anymore
+	        success: function (data) {
+	        	$("#scheduleForm").hide();
+	        	$("#confirmDiv").show();
+	        	window.scrollTo(0, 0);
+	        	$("#startTime").html(data.optimalMeetingTimeSlot.startTime);
+	        	$("#endTime").html(data.optimalMeetingTimeSlot.endTime);
+	        	console.log(data);
+	        },
+	        error: function (xhr, status, error) {
+	          	
+	        },
+    	});
+
+	$('#refreshButton').click(function(){
+		location.reload();
+	})
 
 		//alert(JSON.stringify(obj, null, 4));
 	})

@@ -35,7 +35,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                <ul class="nav navbar-nav navbar-right">
                   <li>
-                     <a href="#">Hello, Larry</a>
+                     <a href="#">Hello, Emmanuel</a>
                   </li>
                </ul>
             </div>
@@ -64,7 +64,7 @@
                <!-- Main Menu -->
                <div class="side-menu-container">
                   <ul style="margin-left:5px" class="nav navbar-nav">
-                     <li class="active"><a href="#"><i class="fa fa-users"></i> <span class="sideDescription"> Schedule Meeting </span></a></li>
+                     <li class="active"><a href="#" id="refreshButton"><i class="fa fa-users"></i> <span class="sideDescription"> Schedule Meeting </span></a></li>
                      <li><a href="#"><i class="fa fa-cogs"></i></i> <span class="sideDescription"> Manage Meeting </span></a></li>
                      <!-- Dropdown-->
                      <li class="panel panel-default" id="dropdown">
@@ -91,6 +91,7 @@
          <!-- Main Content -->
          <div class="container-fluid">
             <div class="side-body">
+               <div id="scheduleForm">
                <form class="form-horizontal">
                   <fieldset>
                      <!-- Form Name -->
@@ -120,7 +121,7 @@
                         <label class="col-md-2 control-label" for="time">Time</label>
                         <div class="col-md-6">
                            <div class="input-group">
-                              <input id="time" name="time" class="form-control" placeholder="Meeting Length (miniutes)" type="text">
+                              <input id="time" name="time" class="form-control" placeholder="Meeting Length (minutes)" type="text">
                               <div class="input-group-btn">
                                  <button id="timeBtn" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                  Any Time
@@ -146,9 +147,9 @@
                         <label class="col-md-2 control-label" for="title">Must Attend</label>  
                         <div class="col-md-6">
                            <select id="mustAttSelect" multiple="multiple">
-                              <option value="shoubowang1994@gmail.com">Jack Wang</option>
+                              <option value="zzc278151553@gmail.com">Jack Wang</option>
                               <option value="tyx92000@gmail.com">Anna Tang</option>
-                              <option value="meetmetester001@gmail.com">Jerry Smith</option>
+                              <option value="meetmetester001@gmail.com">Emmanuel Lee</option>
                               <option value="meetmetester002@gmail.com">Leo White</option>
                               <option value="kevin@gmail.com">Kevin Brown</option>
                               <option value="amy@gmail.com">Amy Izzi</option>
@@ -159,9 +160,9 @@
                         <label class="col-md-2 control-label" for="title">May Attend</label>  
                         <div class="col-md-6">
                            <select id="mayAttSelect" multiple="multiple">
-                              <option value="shoubowang1994@gmail.com">Jack Wang</option>
+                              <option value="zzc278151553@gmail.com">Jack Wang</option>
                               <option value="tyx92000@gmail.com">Anna Tang</option>
-                              <option value="meetmetester001@gmail.com">Jerry Smith</option>
+                              <option value="meetmetester001@gmail.com">Emmanuel Lee</option>
                               <option value="meetmetester002@gmail.com">Leo White</option>
                               <option value="kevin@gmail.com">Kevin Brown</option>
                               <option value="amy@gmail.com">Amy Izzi</option>
@@ -178,6 +179,40 @@
                      
                   </fieldset>
                </form>
+               </div>
+               <div id="confirmDiv" hidden>
+                     <form class="form-horizontal">
+                        <fieldset>
+                           <!-- Form Name -->
+                           <legend></legend>
+                           <!-- Text input-->
+                           <div class="form-group">
+                              <label class="col-md-2 control-label" for="title">Available Time Range </label>  
+                              <div class="col-md-6">
+                                    <span id="startTime"> </span> - <span id="endTime"></span>    
+                              </div>
+                           </div>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label" for="title">Finalize Meeting Time</label>  
+                              <div class="col-md-6">
+                                 <input id="startinput" name="location" type="text" placeholder="Start Time" class="form-control col-md-4">
+                                 <input id="endinput" name="location" type="text" placeholder="End Time" class="form-control col-md-4">
+                              </div>
+                           </div>
+                           <div class="form-group">
+                              <label class="col-md-2 control-label" for="title">Additional Description</label>  
+                              <div class="col-md-6">
+                                 <textarea class="form-control" rows="5" id="comment"></textarea>
+                              </div>
+                           </div>
+                           <div class="form-group"> 
+                              <div class="col-md-offset-2 col-md-6">
+                                  <button id="arrangeBtn" type="button" class="btn btn-success"><i class="fa fa-calendar-plus-o"></i> Send Invites</button>
+                              </div>
+                           </div>
+                        </fieldset>
+                     </form>
+               </div>
             </div>
          </div>
          <div class="modal fade" id="newGroupModal">
