@@ -33,6 +33,8 @@
 // });
 
 var path = require('path');
+var MongoClient = require('mongodb').MongoClient;
+var mongoUrl = 'mongodb://localhost:27017/meetme';
 
 var calendar_id;
 // Google OAuth Configuration
@@ -95,16 +97,98 @@ app.post('/postSendMail', function(req, res) {
       console.log('Message sent: ' + info.response);
 
   });
-)};
+});
+
+
 
 app.post('/login', function(req, res){
-  var loginObj = {
-    success : true
+  var rawData = req.body;
+  console.log(rawData);
+  var login = {
+    "email" : rawData.login,
+    "pass" : rawData.password
   };
-  res.send(loginObj);
+
+  console.log(login);
+
+  var db = req.db;
+  var successLogin = false;
+  //var collection = db.get('user');
+  MongoClient.connect(mongoUrl, function(err, db) {
+    db.collection('user', function(err, collection) {
+    collection.find(login, function(err, cursor) {
+      cursor.each(function(err, item) {
+        if(!successLogin && item != null) {
+          successLogin = true;
+          console.log("Login success");
+          var loginObj = {
+              success : true
+            };
+            res.send(loginObj);
+        } else if (!successLogin && item == null) {
+          console.log("Login failed");
+          var loginObj = {
+              success : false
+            };
+            res.send(loginObj);
+        }
+
+        if(item == null) {
+          console.log("DB closed");
+          db.close();
+        }
+      });
+      });
+    });
+  });
+
 })
 
+app.post('/getUserList', function(req, res){
+
+  var db = req.db;
+  var ret = []
+  MongoClient.connect(mongoUrl, function(err, db) {
+    db.collection('user', function(err, collection) {
+    collection.find({}, function(err, cursor) {
+      cursor.each(function(err, item) {
+        console.log(item);
+        if(item != null) {
+          ret.push({
+            name : item.name,
+            email : item.email
+          });
+        }
+        if(item == null) {
+          db.close();
+          console.log(ret);
+          res.send(ret);
+        }
+      });
+      });
+    });
+  });
+});
+
 app.post('/register', function(req, res){
+  var rawData = req.body;
+  console.log(rawData);
+  var Iuser = {
+    "email" : rawData.login,
+    "pass" : rawData.password,
+    "name" : rawData.name
+  };
+
+  var db = req.db;
+
+  MongoClient.connect(mongoUrl, function(err, db) {
+    db.collection('user').insertOne(Iuser, function(err, result) {
+      assert.equal(err, null);
+      console.log("Inserted a document into the restaurants collection.");
+      callback(result);
+    });
+  });
+
   var regObj = {
     success : true
   };

@@ -8,12 +8,13 @@ $( document ).ready(function() {
 	})
 
 	$("#logInBtn").click(function(){
-		var login = $("loginEmail").val();
-		var password = $("loginPassword").val();
+		var login = $("#loginEmail").val();
+		var password = $("#loginPassword").val();
 		var obj = {
 			login : login,
 			password : password
 		};
+		console.log(obj);
 		$.ajax({
 	        url: 'http://localhost:8080/login',
 	        // dataType: "jsonp",
@@ -35,9 +36,9 @@ $( document ).ready(function() {
 	});
 
 	$("#regBtn").click(function(){
-		var name = $("regName").val();
-		var login = $("regEmail").val();
-		var password = $("regPassword").val();
+		var name = $("#regName").val();
+		var login = $("#regEmail").val();
+		var password = $("#regPassword").val();
 		var obj = {
 			login : login,
 			password : password,
