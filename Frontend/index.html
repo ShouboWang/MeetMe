@@ -45,7 +45,7 @@
                         <a href="#about">About</a>
                     </li>
                     <li>
-                        <a id="joinNowBtn">Join Now</a>
+                        <a href="#" id="joinNowBtn">Join Now</a>
                     </li>
                     <li>
                         <a href="#"  id="signInBtn">Sign In</a>
@@ -65,19 +65,50 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Sign In</h4>
+            <h4 class="modal-title">Log in</h4>
           </div>
           <div class="modal-body">
                 <div class="form-group logInRow">
+                    <label> Email </label>
                     <input type="email" class="form-control" id="loginEmail" placeholder="Email">
                 </div>
                 <div class="form-group logInRow">
+                    <label>Password </label>
                     <input type="password" class="form-control" id="loginPassword" placeholder="Password">
                 </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button id="logInBtn" type="button" class="btn btn-success">Log In</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div class="modal fade" id="registerModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Register</h4>
+          </div>
+          <div class="modal-body">
+                <div class="form-group logInRow">
+                    <label> Name </label>
+                    <input type="email" class="form-control" id="regName" placeholder="Your Name">
+                </div>
+                <div class="form-group logInRow">
+                    <label> Email </label>
+                    <input type="email" class="form-control" id="regEmail" placeholder="Your Email">
+                </div>
+                <div class="form-group logInRow">
+                    <label> Password </label>
+                    <input type="password" class="form-control" id="regPassword" placeholder="Your Password">
+                </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button id="regBtn" type="button" class="btn btn-success">Join now</button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -95,7 +126,6 @@
                         <h3>A Better Meeting Planner</h3>
                         <hr class="intro-divider">
                         <ul class="list-inline intro-social-buttons">
-
                             <li>
                                 <a id="googleBtn" class="btn"><i class="fa fa-google-plus"></i> &nbsp; Google Connect</a>
                             </li>

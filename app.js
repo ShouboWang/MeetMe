@@ -104,6 +104,14 @@ app.post('/login', function(req, res){
   res.send(loginObj);
 })
 
+app.post('/register', function(req, res){
+  var regObj = {
+    success : true
+  };
+  res.send(regObj);
+})
+
+
 app.post('/postCal', function(req, res){
   var rawData = req.body;
   console.log(req.body);
