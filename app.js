@@ -188,6 +188,8 @@ function findFreeTimes(rangeStart, rangeEnd, minDuration, busyList) {
 }
 
 function alg(timeObject, res){
+  //console.log("Time Object");
+  //console.log(timeObject);
   timeObjectFormatter(timeObject);
 
   var timeOfDay = timeObject.when;
@@ -244,6 +246,10 @@ function alg(timeObject, res){
 //   'endTime' :   '2015-11-18T21:00:00.000Z'
 // });
 
+  mustItems.sort(function(a, b) {
+    return new Date(b.startTime) - new Date(a.startTime);
+  });
+
   // merge overlapping items
   var i = mustItems.length;
   while (--i > 0) { // iterate reverse
@@ -286,9 +292,9 @@ function alg(timeObject, res){
       }
       // append to free times array
       var rangeStart = new Date(currDate);
-      rangeStart.setHours(todBegin - 5); // TODO: figure out why this -5 is needed... time zone issue???
+      rangeStart.setHours(todBegin); // TODO: figure out why this -5 is needed... time zone issue???
       var rangeEnd = new Date(currDate);
-      rangeEnd.setHours(todEnd - 5); // TODO: figure out why this -5 is needed... time zone issue???
+      rangeEnd.setHours(todEnd); // TODO: figure out why this -5 is needed... time zone issue???
       freeTimes.push.apply(freeTimes, findFreeTimes(rangeStart.toISOString(), rangeEnd.toISOString(), timeObject.duration, busyListForDate));
     }
   }
@@ -298,6 +304,7 @@ function alg(timeObject, res){
   optimalMeetingTimeSlot.startTime = moment(new Date(optimalMeetingTimeSlot.startTime)).format('YYYY-MM-DD h:mm a');
   optimalMeetingTimeSlot.endTime = moment(new Date(optimalMeetingTimeSlot.endTime)).format('YYYY-MM-DD h:mm a');
   timeObject.optimalMeetingTimeSlot = optimalMeetingTimeSlot;
+console.log(timeObject);
   res.send(timeObject);
 }
 
@@ -335,7 +342,8 @@ function timeObjectFormatter(timeObject) {
 function getCalData(calId, date, callback, type){
   googleConfig.calendarId = calId;
   var dateObj = new Date(date);
-  var dateString = dateObj.getFullYear()+'-'+dateObj.getMonth()+'-'+dateObj.getDate();
+  // var today = moment().format('YYYY-MM-DD') + 'T';
+  var dateString = dateObj.getFullYear()+'-'+(dateObj.getMonth()+1)+'-'+dateObj.getDate()+'T';
   // Call google to fetch events for dateString on our calendar
   calendar.events.list({
     calendarId: googleConfig.calendarId,

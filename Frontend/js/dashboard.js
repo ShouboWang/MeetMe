@@ -71,15 +71,21 @@ $( document ).ready(function() {
         contentType:"application/json",
        // jsonpCallback: 'callback', // this is not relevant to the POST anymore
         success: function (data) {
-            var ret = jQuery.parseJSON(data);
-           // $('#lblResponse').html(ret.msg);
-            console.log(ret);
+        	$("#scheduleForm").hide();
+        	$("#confirmDiv").show();
+        	window.scrollTo(0, 0);
+        	$("#startTime").html(data.optimalMeetingTimeSlot.startTime);
+        	$("#endTime").html(data.optimalMeetingTimeSlot.endTime);
+        	console.log(data);
         },
         error: function (xhr, status, error) {
-            console.log('Error: ' + error.message);
-            $('#lblResponse').html('Error connecting to the server.');
+          
         },
     });
+
+	$('#refreshButton').click(function(){
+		location.reload();
+	})
 
 		//alert(JSON.stringify(obj, null, 4));
 	})
