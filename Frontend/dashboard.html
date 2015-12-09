@@ -35,7 +35,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                <ul class="nav navbar-nav navbar-right">
                   <li>
-                     <a href="#">Hello, Emmanuel</a>
+                     <a href="#">Hello!</a>
                   </li>
                </ul>
             </div>
@@ -91,6 +91,11 @@
          <!-- Main Content -->
          <div class="container-fluid">
             <div class="side-body">
+               <div hidden id="successbox"class="alert alert-success" role="alert" style="margin:20px">
+                 <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> &nbsp;
+                 <span class="sr-only">Congrats:</span>
+                 Email invitations have been sent!
+               </div>
                <div id="scheduleForm">
                <form class="form-horizontal">
                   <fieldset>
@@ -147,8 +152,8 @@
                         <label class="col-md-2 control-label" for="title">Must Attend</label>  
                         <div class="col-md-6">
                            <select id="mustAttSelect" multiple="multiple">
-                              <option value="zzc278151553@gmail.com">Jack Wang</option>
-                              <option value="tyx92000@gmail.com">Anna Tang</option>
+                              <option value="hankydream@gmail.com">Jack Wang</option>
+                              <option value="hankydream@hotmail.ca">Anna Tang</option>
                               <option value="meetmetester001@gmail.com">Emmanuel Lee</option>
                               <option value="meetmetester002@gmail.com">Leo White</option>
                               <option value="kevin@gmail.com">Kevin Brown</option>
@@ -160,8 +165,8 @@
                         <label class="col-md-2 control-label" for="title">May Attend</label>  
                         <div class="col-md-6">
                            <select id="mayAttSelect" multiple="multiple">
-                              <option value="zzc278151553@gmail.com">Jack Wang</option>
-                              <option value="tyx92000@gmail.com">Anna Tang</option>
+                              <option value="hankydream@gmail.com">Jack Wang</option>
+                              <option value="hankydream@hotmail.ca">Anna Tang</option>
                               <option value="meetmetester001@gmail.com">Emmanuel Lee</option>
                               <option value="meetmetester002@gmail.com">Leo White</option>
                               <option value="kevin@gmail.com">Kevin Brown</option>
@@ -188,14 +193,14 @@
                            <!-- Text input-->
                            <div class="form-group">
                               <label class="col-md-2 control-label" for="title">Available Time Range </label>  
-                              <div class="col-md-6">
+                              <div class="col-md-6" style="margin-top:7px">
                                     <span id="startTime"> </span> - <span id="endTime"></span>    
                               </div>
                            </div>
                            <div class="form-group">
                               <label class="col-md-2 control-label" for="title">Finalize Meeting Time</label>  
                               <div class="col-md-6">
-                                 <input id="startinput" name="location" type="text" placeholder="Start Time" class="form-control col-md-4">
+                                 <input id="startinput" name="location" type="text" placeholder="Start Time" class="form-control col-md-4" style="margin-bottom:5px;">
                                  <input id="endinput" name="location" type="text" placeholder="End Time" class="form-control col-md-4">
                               </div>
                            </div>
@@ -207,7 +212,7 @@
                            </div>
                            <div class="form-group"> 
                               <div class="col-md-offset-2 col-md-6">
-                                  <button id="arrangeBtn" type="button" class="btn btn-success"><i class="fa fa-calendar-plus-o"></i> Send Invites</button>
+                                  <button id="sendInviteBtn" type="button" class="btn btn-success"><i class="fa fa-calendar-plus-o"></i> Send Invites</button>
                               </div>
                            </div>
                         </fieldset>
@@ -234,7 +239,7 @@
                            <label class="col-md-4 control-label" for="location"># of Must Attend</label>  
                            <div class="col-md-5">
                               <input id="mustattendNum" name="mustattendNum" type="text" class="form-control input-md">
-                           </div>
+                           </div> 
                         </div>
                      </form>
                   </div>

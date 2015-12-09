@@ -68,6 +68,7 @@ app.post('/testId', function(req, res){
 });
 
 app.post('/postSendMail', function(req, res) {
+  var rawData = req.body;
   var nodemailer = require('nodemailer');
 
   // create reusable transporter object using SMTP transport
@@ -80,11 +81,15 @@ app.post('/postSendMail', function(req, res) {
   });
 
   // setup e-mail data with unicode symbols
+  var text = 'Hello, \r\n\r\nYou have been inviated to ' + rawData.title + '.\r\n' +  'Location: ' + rawData.location + '\r\n';
+  text += 'Start Time:' + rawData.startTime + '\r\n' + 'End Time' + rawData.endTime + '\r\n';
+  text += '\r\nMessage:' + rawData.message + '\r\n\r\n';
+  text += 'MeetMe';
   var mailOptions = {
       from: 'MeetMe <mail.meetme@gmail.com>', // sender address
-      to: 'eman.j.lee@gmail.com', // list of receivers
+      to: rawData.emailArray.join(), // list of receivers
       subject: 'MeetMe: Your presence has been requested!', // Subject line
-      text: 'Hello,', // plaintext body
+      text: text, // plaintext body
   };
 
   // send mail with defined transport object
@@ -93,16 +98,17 @@ app.post('/postSendMail', function(req, res) {
           return console.log(error);
       }
       console.log('Message sent: ' + info.response);
+      res.send({success: true});
 
   });
-)};
+});
 
 app.post('/login', function(req, res){
   var loginObj = {
     success : true
   };
   res.send(loginObj);
-})
+});
 
 app.post('/register', function(req, res){
   var regObj = {
