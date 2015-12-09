@@ -199,9 +199,9 @@ app.post('/postCal', function(req, res){
       console.log(err);
     } else {
       if(type == -1) {
-        timeObject.mustAttend.push(timeEventFormatter(events));
-      } else if(type == -2) {
         timeObject.mayAttend.push(timeEventFormatter(events));
+      } else if(type == -2) {
+        timeObject.mustAttend.push(timeEventFormatter(events));
       } else {
         timeObject.cusAttend[type].list.push(timeEventFormatter(events));
       }
@@ -220,6 +220,11 @@ app.post('/postCal', function(req, res){
         return;
     }
 
+    console.log("=============================");
+    console.log(timeObject);
+    console.log("=============================");
+    console.log(timeObject.mustAttend[0].items);
+    console.log("=============================");
     alg(timeObject, res);
   }
 
@@ -252,9 +257,12 @@ function findFreeTimes(rangeStart, rangeEnd, minDuration, busyList) {
 
   var freeTimes = [];
   var iStart = new Date(rangeStart);
+  // iStart.setHours(iStart.getHours() - 5);
   var iEnd = new Date(rangeEnd);
+  // iEnd.setHours(iEnd.getHours() - 5);
   for (var i = 0; i < busyList.length; i++) {
     iEnd = new Date(busyList[i].startTime);
+    iEnd.setHours(iEnd.getHours() - 5);
     var diffMins = Math.round( (Math.abs(iEnd - iStart) / 1000) / 60 );
     if (diffMins >= minDuration) {
       freeTimes.push({
@@ -263,13 +271,18 @@ function findFreeTimes(rangeStart, rangeEnd, minDuration, busyList) {
       });
     }
     iStart = new Date(busyList[i].endTime);
+    iStart.setHours(iStart.getHours() - 5);
   }
 
-  var diffMins = Math.round( (Math.abs(new Date(rangeEnd) - iStart) / 1000) / 60 );
+  var rangeEnd = new Date(rangeEnd);
+  // rangeEnd.setHours(rangeEnd.getHours() - 5);
+  var diffMins = Math.round( (Math.abs(rangeEnd - iStart) / 1000) / 60 );
   if (diffMins >= minDuration) {
+    var endTime = new Date(rangeEnd);
+    // endTime.setHours(endTime.getHours() - 5);
     freeTimes.push({
       "startTime" : iStart.toISOString(),
-      "endTime" : new Date(rangeEnd).toISOString()
+      "endTime" : endTime.toISOString()
     });
   }
   return freeTimes;
@@ -301,7 +314,7 @@ function alg(timeObject, res){
     for (var ii = 0; ii < mustAttendeeItems.length; ii++) {
       var startTime = new Date(mustAttendeeItems[ii].startTime);
       var endTime = new Date(mustAttendeeItems[ii].endTime);
-      if (startTime.getHours() >= todBegin && endTime.getHours() <= todEnd) {
+      if (startTime.getHours() >= todBegin && endTime.getHours() < todEnd) {
         mustItems.push({
           'startTime' : startTime,
           'endTime' : endTime
@@ -330,9 +343,9 @@ function alg(timeObject, res){
     for (var d = 0; d < timeObject.dates.length; d++) {
       var date = new Date(timeObject.dates[d]);
       var startTime = new Date(date);
-      startTime.setHours(todBegin);
+      startTime.setHours(todBegin - 5);
       var endTime = new Date(date);
-      endTime.setHours(todEnd);
+      endTime.setHours(todEnd - 5);
       freeTimes.push({
         "startTime" : startTime.toISOString(),
         "endTime" : endTime.toISOString()
@@ -361,8 +374,12 @@ function alg(timeObject, res){
 
   var randomReturnIndex = Math.floor(Math.random() * (freeTimes.length - 1));
   var optimalMeetingTimeSlot = freeTimes[randomReturnIndex];
-  optimalMeetingTimeSlot.startTime = moment(new Date(optimalMeetingTimeSlot.startTime)).format('YYYY-MM-DD h:mm a');
-  optimalMeetingTimeSlot.endTime = moment(new Date(optimalMeetingTimeSlot.endTime)).format('YYYY-MM-DD h:mm a');
+  optimalMeetingStartTime = new Date(optimalMeetingTimeSlot.startTime);
+  optimalMeetingStartTime.setHours(optimalMeetingStartTime.getHours() + 5);
+  optimalMeetingTimeSlot.startTime = moment(optimalMeetingStartTime).format('YYYY-MM-DD h:mm a');
+  optimalMeetingEndTime = new Date(optimalMeetingTimeSlot.endTime);
+  optimalMeetingEndTime.setHours(optimalMeetingEndTime.getHours() + 5);
+  optimalMeetingTimeSlot.endTime = moment(optimalMeetingEndTime).format('YYYY-MM-DD h:mm a');
   timeObject.optimalMeetingTimeSlot = optimalMeetingTimeSlot;
   res.send(timeObject);
 }
@@ -411,7 +428,6 @@ function getCalData(calId, date, callback, type){
     timeMax: dateString + '23:59:59.000Z',
     auth: oAuthClient
   };
-  console.log(calData);
   calendar.events.list(calData, function(err, events) {
     callback(err, events, type);
   });
