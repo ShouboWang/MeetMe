@@ -76,6 +76,36 @@ app.post('/testId', function(req, res){
   res.redirect('/');
 });
 
+app.post('/postSendMail', function(req, res) {
+  var nodemailer = require('nodemailer');
+
+  // create reusable transporter object using SMTP transport
+  var transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+          user: 'mail.meetme@gmail.com',
+          pass: 'meetmeapp'
+      }
+  });
+
+  // setup e-mail data with unicode symbols
+  var mailOptions = {
+      from: 'MeetMe <mail.meetme@gmail.com>', // sender address
+      to: 'eman.j.lee@gmail.com', // list of receivers
+      subject: 'MeetMe: Your presence has been requested!', // Subject line
+      text: 'Hello,', // plaintext body
+  };
+
+  // send mail with defined transport object
+  transporter.sendMail(mailOptions, function(error, info){
+      if(error){
+          return console.log(error);
+      }
+      console.log('Message sent: ' + info.response);
+
+  });
+)};
+
 
 app.post('/postCal', function(req, res){
   var rawData = req.body;
@@ -101,7 +131,7 @@ app.post('/postCal', function(req, res){
     cusObject.list = [];
     cusObject.cusAttendNum = rawData.customGroup[i].list.length;
     cusObject.curCusAttendNum = 0;
-    timeObject.cusAttend.push(cusObject);    
+    timeObject.cusAttend.push(cusObject);
 
   }
   // type -2 = must, -1 = may, >0 = cus
